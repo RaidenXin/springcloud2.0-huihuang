@@ -1,0 +1,6 @@
+feign\CustomSentinelFeign$Builder$1.class
+feign\annotation\RpcInfo.class
+feign\CustomSentinelFeign$Builder.class
+feign\CustomSentinelInvocationHandler.class
+feign\CustomSentinelFeign.class
+feign\config\CustomSentinelFeignAutoConfiguration.class

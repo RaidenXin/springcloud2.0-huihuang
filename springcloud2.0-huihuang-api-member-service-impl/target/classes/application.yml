@@ -1,0 +1,39 @@
+###服务启动端口号
+server:
+  port: 8200
+###服务名称(服务注册到eureka名称)  
+spring:
+  application:
+    name: app-huihuang-member
+###服务注册到eureka地址
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
+      config:
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
+        timeout: 4000
+    #配置sentinel客户端，注册该项目进控制台里
+    sentinel:
+      eager: true
+      transport:
+        #配置Sentin dashboard地址
+        dashboard: localhost:8080
+        # 默认8719端口，假如被占用了会自动从8719端口+1进行扫描，直到找到未被占用的 端口
+        port: 8719
+      #nacos  从nacos拉取数据需要配置
+      datasource:
+        #名称随意
+        flow:
+          nacos:
+            server-addr: 127.0.0.1:8848
+            namespace: sentinel-rule
+            username: nacos
+            password: nacos
+            dataId: ${spring.application.name}-flow-rules
+            groupId: SENTINEL_GROUP
+            rule-type: flow
