@@ -23,12 +23,11 @@ public abstract class AbstractReinforceInvocationHandler {
         this.properties = properties;
     }
 
-    public void initRpcInfo(Map<Method, InvocationHandlerFactory.MethodHandler> dispatch){
+    protected void initRpcInfo(Map<Method, InvocationHandlerFactory.MethodHandler> dispatch){
         final Map<String, ReinforceOptions> rpcConfig = properties.getRpcConfig();
         dispatch.entrySet().stream().forEach(e -> {
             Method method = e.getKey();
             InvocationHandlerFactory.MethodHandler methodHandler = e.getValue();
-            RpcInfo annotation = method.getAnnotation(RpcInfo.class);
             Class<?> declaringClass = method.getDeclaringClass();
             StringBuilder configKey = new StringBuilder(declaringClass.getSimpleName());
             configKey.append(method.getName());
@@ -38,6 +37,7 @@ public abstract class AbstractReinforceInvocationHandler {
             ReinforceOptions reinforceOptions = rpcConfig.get(configKey.toString());
             Request.Options options = null;
             if (reinforceOptions == null){
+                RpcInfo annotation = method.getAnnotation(RpcInfo.class);
                 if (annotation == null){
                     //从父类头上获取
                     annotation = declaringClass.getAnnotation(RpcInfo.class);
