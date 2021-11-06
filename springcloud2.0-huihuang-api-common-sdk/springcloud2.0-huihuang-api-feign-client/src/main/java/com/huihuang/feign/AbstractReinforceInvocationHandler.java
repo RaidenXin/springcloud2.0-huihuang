@@ -1,6 +1,8 @@
 package com.huihuang.feign;
 
 import com.huihuang.feign.annotation.RpcInfo;
+import com.huihuang.feign.properties.ReinforceFeignProperties;
+import com.huihuang.feign.properties.ReinforceOptions;
 import com.huihuang.feign.utils.FieldUtils;
 import feign.InvocationHandlerFactory;
 import feign.Request;
@@ -15,18 +17,36 @@ import java.util.Map;
  */
 public abstract class AbstractReinforceInvocationHandler {
 
+    private ReinforceFeignProperties properties;
+
+    public AbstractReinforceInvocationHandler(ReinforceFeignProperties properties){
+        this.properties = properties;
+    }
+
     public void initRpcInfo(Map<Method, InvocationHandlerFactory.MethodHandler> dispatch){
+        final Map<String, ReinforceOptions> rpcConfig = properties.getRpcConfig();
         dispatch.entrySet().stream().forEach(e -> {
             Method method = e.getKey();
             InvocationHandlerFactory.MethodHandler methodHandler = e.getValue();
             RpcInfo annotation = method.getAnnotation(RpcInfo.class);
-            Request.Options options = null;
-            if (annotation == null){
-                //从父类头上获取
-                annotation = method.getDeclaringClass().getAnnotation(RpcInfo.class);
+            Class<?> declaringClass = method.getDeclaringClass();
+            StringBuilder configKey = new StringBuilder(declaringClass.getSimpleName());
+            configKey.append(method.getName());
+            for (Class<?> c : method.getParameterTypes()){
+                configKey.append(c.getSimpleName());
             }
-            if (annotation != null){
-                options = new Request.Options(annotation.connectTimeout(), annotation.connectTimeoutUnit(), annotation.readTimeout(), annotation.readTimeoutUnit(), annotation.followRedirects());
+            ReinforceOptions reinforceOptions = rpcConfig.get(configKey.toString());
+            Request.Options options = null;
+            if (reinforceOptions == null){
+                if (annotation == null){
+                    //从父类头上获取
+                    annotation = declaringClass.getAnnotation(RpcInfo.class);
+                }
+                if (annotation != null){
+                    options = new Request.Options(annotation.connectTimeout(), annotation.connectTimeoutUnit(), annotation.readTimeout(), annotation.readTimeoutUnit(), annotation.followRedirects());
+                }
+            }else {
+                options = reinforceOptions.options();
             }
             if (options != null){
                 FieldUtils.setFieldValue(methodHandler, "options", options);

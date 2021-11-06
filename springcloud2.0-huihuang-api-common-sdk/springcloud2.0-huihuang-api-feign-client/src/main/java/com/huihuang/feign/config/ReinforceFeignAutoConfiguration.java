@@ -4,6 +4,7 @@ import com.alibaba.cloud.sentinel.feign.SentinelFeignAutoConfiguration;
 import com.alibaba.csp.sentinel.SphU;
 import com.huihuang.feign.ReinforceFeign;
 import com.huihuang.feign.ReinforceSentinelFeign;
+import com.huihuang.feign.properties.ReinforceFeignProperties;
 import feign.Feign;
 import feign.Feign.Builder;
 import feign.Retryer;
@@ -11,6 +12,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -19,6 +21,7 @@ import org.springframework.context.annotation.Scope;
     proxyBeanMethods = false
 )
 @AutoConfigureBefore(SentinelFeignAutoConfiguration.class)
+@EnableConfigurationProperties(ReinforceFeignProperties.class)
 public class ReinforceFeignAutoConfiguration {
     public ReinforceFeignAutoConfiguration() {
     }

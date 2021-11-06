@@ -1,5 +1,6 @@
 package com.huihuang.feign;
 
+import com.huihuang.feign.properties.ReinforceFeignProperties;
 import feign.Feign;
 import feign.InvocationHandlerFactory;
 import feign.Target;
@@ -33,9 +34,10 @@ public final class ReinforceFeign {
         }
 
         public Feign build() {
+            ReinforceFeignProperties properties = applicationContext.getBean(ReinforceFeignProperties.class);
             super.invocationHandlerFactory(new InvocationHandlerFactory() {
                 public InvocationHandler create(Target target, Map<Method, MethodHandler> dispatch) {
-                    return new ReinforceFeignInvocationHandler(target, dispatch);
+                    return new ReinforceFeignInvocationHandler(target, dispatch, properties);
                 }
             });
             return super.build();

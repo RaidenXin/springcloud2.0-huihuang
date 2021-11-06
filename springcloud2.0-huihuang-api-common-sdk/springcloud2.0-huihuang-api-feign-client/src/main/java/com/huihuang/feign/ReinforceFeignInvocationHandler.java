@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.*;
 
+import com.huihuang.feign.properties.ReinforceFeignProperties;
 import feign.InvocationHandlerFactory.MethodHandler;
 import feign.Target;
 
@@ -14,10 +15,11 @@ public class ReinforceFeignInvocationHandler extends AbstractReinforceInvocation
     private final Target target;
     private final Map<Method, MethodHandler> dispatch;
 
-    ReinforceFeignInvocationHandler(Target target, Map<Method, MethodHandler> dispatch) {
-      this.target = checkNotNull(target, "target");
-      this.dispatch = checkNotNull(dispatch, "dispatch for %s", target);
-      initRpcInfo(this.dispatch);
+    ReinforceFeignInvocationHandler(Target target, Map<Method, MethodHandler> dispatch, ReinforceFeignProperties properties) {
+        super(properties);
+        this.target = checkNotNull(target, "target");
+        this.dispatch = checkNotNull(dispatch, "dispatch for %s", target);
+        initRpcInfo(this.dispatch);
     }
 
     @Override

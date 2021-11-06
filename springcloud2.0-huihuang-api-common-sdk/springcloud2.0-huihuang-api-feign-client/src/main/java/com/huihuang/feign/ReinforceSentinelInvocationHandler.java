@@ -11,6 +11,7 @@ import com.alibaba.csp.sentinel.SphU;
 import com.alibaba.csp.sentinel.Tracer;
 import com.alibaba.csp.sentinel.context.ContextUtil;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
+import com.huihuang.feign.properties.ReinforceFeignProperties;
 import feign.Feign;
 import feign.InvocationHandlerFactory.MethodHandler;
 import feign.MethodMetadata;
@@ -35,7 +36,8 @@ public class ReinforceSentinelInvocationHandler extends AbstractReinforceInvocat
 	private Map<Method, Method> fallbackMethodMap;
 
 	ReinforceSentinelInvocationHandler(Target<?> target, Map<Method, MethodHandler> dispatch,
-                                       FallbackFactory fallbackFactory) {
+                                       FallbackFactory fallbackFactory, ReinforceFeignProperties properties) {
+        super(properties);
 		this.target = checkNotNull(target, "target");
 		this.dispatch = checkNotNull(dispatch, "dispatch");
 		this.fallbackFactory = fallbackFactory;
@@ -43,7 +45,8 @@ public class ReinforceSentinelInvocationHandler extends AbstractReinforceInvocat
 		initRpcInfo(this.dispatch);
 	}
 
-	ReinforceSentinelInvocationHandler(Target<?> target, Map<Method, MethodHandler> dispatch) {
+	ReinforceSentinelInvocationHandler(Target<?> target, Map<Method, MethodHandler> dispatch, ReinforceFeignProperties properties) {
+        super(properties);
 		this.target = checkNotNull(target, "target");
 		this.dispatch = checkNotNull(dispatch, "dispatch");
 		initRpcInfo(this.dispatch);

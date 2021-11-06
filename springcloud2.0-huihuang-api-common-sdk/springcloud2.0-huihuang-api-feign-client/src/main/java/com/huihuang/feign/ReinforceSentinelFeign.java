@@ -7,6 +7,7 @@ package com.huihuang.feign;
 
 import com.alibaba.cloud.sentinel.feign.SentinelContractHolder;
 import com.alibaba.cloud.sentinel.feign.SentinelTargeterAspect;
+import com.huihuang.feign.properties.ReinforceFeignProperties;
 import com.huihuang.feign.utils.FieldUtils;
 import feign.Contract;
 import feign.Contract.Default;
@@ -50,6 +51,7 @@ public final class ReinforceSentinelFeign {
         }
 
         public Feign build() {
+            ReinforceFeignProperties properties = applicationContext.getBean(ReinforceFeignProperties.class);
             super.invocationHandlerFactory(new InvocationHandlerFactory() {
                 public InvocationHandler create(Target target, Map<Method, MethodHandler> dispatch) {
                     Object feignClientFactoryBean = SentinelTargeterAspect.getFeignClientFactoryBean();
@@ -63,16 +65,16 @@ public final class ReinforceSentinelFeign {
 
                         if (Void.TYPE != fallback) {
                             Object fallbackInstance = this.getFromContext(beanName, "fallback", fallback, target.type());
-                            return new ReinforceSentinelInvocationHandler(target, dispatch, new feign.hystrix.FallbackFactory.Default(fallbackInstance));
+                            return new ReinforceSentinelInvocationHandler(target, dispatch, new feign.hystrix.FallbackFactory.Default(fallbackInstance), properties);
                         }
 
                         if (Void.TYPE != fallbackFactory) {
                             FallbackFactory fallbackFactoryInstance = (FallbackFactory)this.getFromContext(beanName, "fallbackFactory", fallbackFactory, FallbackFactory.class);
-                            return new ReinforceSentinelInvocationHandler(target, dispatch, fallbackFactoryInstance);
+                            return new ReinforceSentinelInvocationHandler(target, dispatch, fallbackFactoryInstance, properties);
                         }
                     }
 
-                    return new ReinforceSentinelInvocationHandler(target, dispatch);
+                    return new ReinforceSentinelInvocationHandler(target, dispatch, properties);
                 }
 
                 private Object getFromContext(String name, String type, Class fallbackType, Class targetType) {
