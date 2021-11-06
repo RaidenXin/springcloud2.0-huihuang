@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  feign.config.CustomSentinelFeignAutoConfiguration
+  com.huihuang.feign.config.ReinforceFeignAutoConfiguration

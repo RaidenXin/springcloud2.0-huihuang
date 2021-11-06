@@ -1,7 +1,6 @@
 package com.huihuang.service;
 
 import com.huihuang.entiy.User;
-import feign.annotation.RpcInfo;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

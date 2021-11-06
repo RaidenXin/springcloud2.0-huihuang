@@ -18,6 +18,12 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public List<User> getUsers(String name) {
+        long start = System.currentTimeMillis();
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         List<User> users = new ArrayList<>();
         User user1 = new User();
         user1.setId("1");
@@ -29,6 +35,8 @@ public class MemberServiceImpl implements MemberService{
         user2.setName("lisi");
         users.add(user1);
         users.add(user2);
+        long end = System.currentTimeMillis();
+        log.error("getUser 耗时 " + (end - start) + "ms");
         return users;
     }
 

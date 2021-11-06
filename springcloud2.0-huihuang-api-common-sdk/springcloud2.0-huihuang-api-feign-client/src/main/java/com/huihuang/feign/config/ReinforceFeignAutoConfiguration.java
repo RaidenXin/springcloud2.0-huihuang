@@ -1,10 +1,12 @@
-package feign.config;
+package com.huihuang.feign.config;
 
 import com.alibaba.cloud.sentinel.feign.SentinelFeignAutoConfiguration;
 import com.alibaba.csp.sentinel.SphU;
-import feign.CustomSentinelFeign;
+import com.huihuang.feign.ReinforceFeign;
+import com.huihuang.feign.ReinforceSentinelFeign;
 import feign.Feign;
 import feign.Feign.Builder;
+import feign.Retryer;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -16,10 +18,9 @@ import org.springframework.context.annotation.Scope;
 @Configuration(
     proxyBeanMethods = false
 )
-@ConditionalOnClass({SphU.class, Feign.class})
 @AutoConfigureBefore(SentinelFeignAutoConfiguration.class)
-public class CustomSentinelFeignAutoConfiguration {
-    public CustomSentinelFeignAutoConfiguration() {
+public class ReinforceFeignAutoConfiguration {
+    public ReinforceFeignAutoConfiguration() {
     }
 
     @Bean
@@ -28,7 +29,22 @@ public class CustomSentinelFeignAutoConfiguration {
     @ConditionalOnProperty(
         name = {"feign.sentinel.enabled"}
     )
+    @ConditionalOnClass({SphU.class, Feign.class})
     public Builder feignSentinelBuilder() {
-        return CustomSentinelFeign.builder();
+        return ReinforceSentinelFeign.builder();
+    }
+
+
+    @Bean
+    @ConditionalOnMissingBean
+    public Retryer feignRetryer() {
+        return Retryer.NEVER_RETRY;
+    }
+
+    @Bean
+    @Scope("prototype")
+    @ConditionalOnMissingBean
+    public Feign.Builder feignBuilder(Retryer retryer) {
+        return ReinforceFeign.builder().retryer(retryer);
     }
 }

@@ -2,6 +2,7 @@ package com.huihuang.service;
 
 import com.huihuang.entiy.User;
 import feign.feign.MemberServiceFeign;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
@@ -18,6 +19,7 @@ import java.io.OutputStream;
 import java.util.List;
 
 @RestController
+@Slf4j
 public class OrderServiceImpl implements OrderService{
 
     @Autowired
@@ -25,6 +27,7 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public List<User> getMemberList(String name) {
+        log.error("getMemberList name is " + name);
         return memberService.getUsers(name);
     }
 

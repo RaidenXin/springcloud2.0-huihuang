@@ -1,4 +1,4 @@
-package feign;
+package com.huihuang.feign;
 
 import java.lang.reflect.*;
 import java.util.LinkedHashMap;
@@ -11,10 +11,11 @@ import com.alibaba.csp.sentinel.SphU;
 import com.alibaba.csp.sentinel.Tracer;
 import com.alibaba.csp.sentinel.context.ContextUtil;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
-import feign.annotation.RpcInfo;
+import feign.Feign;
 import feign.InvocationHandlerFactory.MethodHandler;
+import feign.MethodMetadata;
+import feign.Target;
 import feign.hystrix.FallbackFactory;
-import org.springframework.util.ReflectionUtils;
 
 import static feign.Util.checkNotNull;
 
@@ -23,7 +24,7 @@ import static feign.Util.checkNotNull;
  *
  * @author <a href="mailto:fangjian0423@gmail.com">Jim</a>
  */
-public class CustomSentinelInvocationHandler implements InvocationHandler {
+public class ReinforceSentinelInvocationHandler extends AbstractReinforceInvocationHandler implements InvocationHandler {
 
 	private final Target<?> target;
 
@@ -33,49 +34,20 @@ public class CustomSentinelInvocationHandler implements InvocationHandler {
 
 	private Map<Method, Method> fallbackMethodMap;
 
-	CustomSentinelInvocationHandler(Target<?> target, Map<Method, MethodHandler> dispatch,
-                                    FallbackFactory fallbackFactory) {
+	ReinforceSentinelInvocationHandler(Target<?> target, Map<Method, MethodHandler> dispatch,
+                                       FallbackFactory fallbackFactory) {
 		this.target = checkNotNull(target, "target");
 		this.dispatch = checkNotNull(dispatch, "dispatch");
 		this.fallbackFactory = fallbackFactory;
 		this.fallbackMethodMap = toFallbackMethod(dispatch);
-		init();
+		initRpcInfo(this.dispatch);
 	}
 
-	CustomSentinelInvocationHandler(Target<?> target, Map<Method, MethodHandler> dispatch) {
+	ReinforceSentinelInvocationHandler(Target<?> target, Map<Method, MethodHandler> dispatch) {
 		this.target = checkNotNull(target, "target");
 		this.dispatch = checkNotNull(dispatch, "dispatch");
-		init();
+		initRpcInfo(this.dispatch);
 	}
-
-	private void init(){
-        dispatch.entrySet().stream().forEach(e -> {
-            Method method = e.getKey();
-            MethodHandler methodHandler = e.getValue();
-            if (methodHandler instanceof SynchronousMethodHandler){
-                SynchronousMethodHandler synchronousMethodHandler = (SynchronousMethodHandler) methodHandler;
-                RpcInfo annotation = method.getAnnotation(RpcInfo.class);
-                Request.Options options;
-                if (annotation == null){
-                    //从父类头上获取
-                    annotation = method.getDeclaringClass().getAnnotation(RpcInfo.class);
-                }
-                if (annotation != null){
-                    options = new Request.Options(annotation.connectTimeout(), annotation.connectTimeoutUnit(), annotation.readTimeout(), annotation.readTimeoutUnit(), annotation.followRedirects());
-                    setFieldValue(synchronousMethodHandler, "options", options);
-                }
-            }
-        });
-    }
-
-    private void setFieldValue(Object instance, String fieldName,Object value) {
-        Field field = ReflectionUtils.findField(instance.getClass(), fieldName);
-        field.setAccessible(true);
-        try {
-            field.set(instance, value);
-        } catch (IllegalAccessException var5) {
-        }
-    }
 
 	@Override
 	public Object invoke(final Object proxy, final Method method, final Object[] args)
@@ -161,8 +133,8 @@ public class CustomSentinelInvocationHandler implements InvocationHandler {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof CustomSentinelInvocationHandler) {
-			CustomSentinelInvocationHandler other = (CustomSentinelInvocationHandler) obj;
+		if (obj instanceof ReinforceSentinelInvocationHandler) {
+			ReinforceSentinelInvocationHandler other = (ReinforceSentinelInvocationHandler) obj;
 			return target.equals(other.target);
 		}
 		return false;

@@ -1,4 +1,4 @@
-package feign.annotation;
+package com.huihuang.feign.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
