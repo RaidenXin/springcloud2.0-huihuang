@@ -40,6 +40,22 @@ spring:
 feign:
   sentinel:
     enabled: true
+  client:
+    rpcConfig:
+      MemberService#getUsers(String):
+        connectTimeout: 2
+        connectTimeoutUnit: SECONDS
+        readTimeout: 1
+        readTimeoutUnit: SECONDS
+        followRedirects: false
+      MemberService#getUsers(String,Long):
+        connectTimeout: 2
+        connectTimeoutUnit: SECONDS
+        readTimeout: 1
+        readTimeoutUnit: SECONDS
+        followRedirects: false
 ribbon:
   ConnectTimeout: 5000
   ReadTimeout: 5000
+
+

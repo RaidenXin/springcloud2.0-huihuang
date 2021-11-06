@@ -12,10 +12,11 @@
     <artifactId>springcloud2.0-huihuang-api-member-service</artifactId>
 
     <dependencies>
-<!--        <dependency>-->
-<!--            <groupId>springcloud2.0-huihuang-parent</groupId>-->
-<!--            <artifactId>springcloud2.0-huihuang-api-feign-client</artifactId>-->
-<!--            <version>1.0-SNAPSHOT</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>springcloud2.0-huihuang-parent</groupId>
+            <artifactId>springcloud2.0-huihuang-api-feign-client</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>
