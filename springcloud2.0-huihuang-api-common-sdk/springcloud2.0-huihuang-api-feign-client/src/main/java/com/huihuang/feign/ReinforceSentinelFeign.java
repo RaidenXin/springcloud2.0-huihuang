@@ -7,6 +7,7 @@ package com.huihuang.feign;
 
 import com.alibaba.cloud.sentinel.feign.SentinelContractHolder;
 import com.alibaba.cloud.sentinel.feign.SentinelTargeterAspect;
+import com.huihuang.feign.utils.FieldUtils;
 import feign.Contract;
 import feign.Contract.Default;
 import feign.Feign;
@@ -21,7 +22,7 @@ import org.springframework.cloud.openfeign.FeignContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.StringUtils;
-import static com.huihuang.feign.utils.FieldUtils.getFieldValue;
+
 
 public final class ReinforceSentinelFeign {
     private ReinforceSentinelFeign() {
