@@ -5,6 +5,8 @@ import com.alibaba.csp.sentinel.SphU;
 import com.huihuang.feign.ReinforceFeign;
 import com.huihuang.feign.ReinforceSentinelFeign;
 import com.huihuang.feign.properties.ReinforceFeignProperties;
+import org.springframework.cloud.openfeign.ribbon.ReinforceLoabBalancerFeignClient;
+import feign.Client;
 import feign.Feign;
 import feign.Feign.Builder;
 import feign.Retryer;
@@ -13,6 +15,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
+import org.springframework.cloud.openfeign.ribbon.CachingSpringLoadBalancerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -49,5 +53,13 @@ public class ReinforceFeignAutoConfiguration {
     @ConditionalOnMissingBean
     public Feign.Builder feignBuilder(Retryer retryer) {
         return ReinforceFeign.builder().retryer(retryer);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public Client feignClient(CachingSpringLoadBalancerFactory cachingFactory,
+                              SpringClientFactory clientFactory) {
+        return new ReinforceLoabBalancerFeignClient(new Client.Default(null, null), cachingFactory,
+                clientFactory);
     }
 }

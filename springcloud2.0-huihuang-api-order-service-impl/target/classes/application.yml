@@ -7,6 +7,9 @@ spring:
     name: app-huihuang-order
 ###服务注册到eureka地址
   cloud:
+    loadbalancer:
+      retry:
+        enabled: true
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
@@ -43,19 +46,10 @@ feign:
   client:
     rpcConfig:
       MemberService#getUsers(String):
-        connectTimeout: 2
+        connectTimeout: 1
         connectTimeoutUnit: SECONDS
         readTimeout: 1
         readTimeoutUnit: SECONDS
         followRedirects: false
-      MemberService#getUsers(String,Long):
-        connectTimeout: 2
-        connectTimeoutUnit: SECONDS
-        readTimeout: 1
-        readTimeoutUnit: SECONDS
-        followRedirects: false
-ribbon:
-  ConnectTimeout: 5000
-  ReadTimeout: 5000
-
-
+        MaxAutoRetries: 2 # 对当前实例的重试次数
+        MaxAutoRetriesNextServer: 1 # 切换实例的重试次数
