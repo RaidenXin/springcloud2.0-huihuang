@@ -22,8 +22,6 @@ public class ReinforceOptions {
     private int maxAutoRetriesNextServer;
     private int maxAutoRetries;
 
-    private Method method;
-
     public long getConnectTimeout() {
         return connectTimeout;
     }
@@ -80,25 +78,15 @@ public class ReinforceOptions {
         this.maxAutoRetries = maxAutoRetries;
     }
 
-    public Method getMethod() {
-        return method;
-    }
-
-    public void setMethod(Method method) {
-        this.method = method;
-    }
-
     public static class Options extends Request.Options{
 
         private int maxAutoRetriesNextServer;
         private int maxAutoRetries;
-        private Method method;
 
         public Options(ReinforceOptions options){
             super(options.connectTimeout, options.connectTimeoutUnit, options.readTimeout, options.readTimeoutUnit, options.followRedirects);
             this.maxAutoRetries = options.maxAutoRetries;
             this.maxAutoRetriesNextServer = options.maxAutoRetriesNextServer;
-            this.method = options.method;
         }
 
         public int getMaxAutoRetriesNextServer() {
@@ -115,14 +103,6 @@ public class ReinforceOptions {
 
         public void setMaxAutoRetries(int maxAutoRetries) {
             this.maxAutoRetries = maxAutoRetries;
-        }
-
-        public Method getMethod() {
-            return method;
-        }
-
-        public void setMethod(Method method) {
-            this.method = method;
         }
     }
 
