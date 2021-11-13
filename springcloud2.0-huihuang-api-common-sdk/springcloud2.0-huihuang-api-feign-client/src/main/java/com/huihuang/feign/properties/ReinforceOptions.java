@@ -1,8 +1,8 @@
 package com.huihuang.feign.properties;
 
+import com.huihuang.feign.annotation.RpcInfo;
 import feign.Request;
 
-import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -19,8 +19,8 @@ public class ReinforceOptions {
     private TimeUnit readTimeoutUnit;
     private boolean followRedirects;
 
-    private int maxAutoRetriesNextServer;
-    private int maxAutoRetries;
+    private int maxAutoRetriesNextServer = 0;
+    private int maxAutoRetries = 0;
 
     public long getConnectTimeout() {
         return connectTimeout;
@@ -78,15 +78,27 @@ public class ReinforceOptions {
         this.maxAutoRetries = maxAutoRetries;
     }
 
+    public boolean isRetry(){
+        return this.maxAutoRetries > 0 || this.maxAutoRetriesNextServer > 0;
+    }
+
     public static class Options extends Request.Options{
 
         private int maxAutoRetriesNextServer;
         private int maxAutoRetries;
+        private boolean isAllowedRetry;
 
         public Options(ReinforceOptions options){
             super(options.connectTimeout, options.connectTimeoutUnit, options.readTimeout, options.readTimeoutUnit, options.followRedirects);
             this.maxAutoRetries = options.maxAutoRetries;
             this.maxAutoRetriesNextServer = options.maxAutoRetriesNextServer;
+        }
+
+        public Options(RpcInfo info){
+            super(info.connectTimeout(), info.connectTimeoutUnit(), info.readTimeout(), info.readTimeoutUnit(), info.followRedirects());
+            this.maxAutoRetries = info.maxAutoRetries();
+            this.maxAutoRetriesNextServer = info.maxAutoRetriesNextServer();
+            this.isAllowedRetry = info.isAllowedRetry();
         }
 
         public int getMaxAutoRetriesNextServer() {
@@ -104,9 +116,17 @@ public class ReinforceOptions {
         public void setMaxAutoRetries(int maxAutoRetries) {
             this.maxAutoRetries = maxAutoRetries;
         }
+
+        public boolean isAllowedRetry() {
+            return isAllowedRetry;
+        }
+
+        public void setAllowedRetry(boolean allowedRetry) {
+            isAllowedRetry = allowedRetry;
+        }
     }
 
-    public Request.Options options(){
+    public ReinforceOptions.Options options(){
         return new ReinforceOptions.Options(this);
     }
 }

@@ -14,7 +14,7 @@ public class ReinforceFeignOptionsClientConfig extends DefaultClientConfigImpl {
 			setProperty(CommonClientConfigKey.ConnectTimeout, options.connectTimeoutMillis());
 			setProperty(CommonClientConfigKey.ReadTimeout, options.readTimeoutMillis());
 
-			if (options instanceof ReinforceOptions.Options){
+			if (options instanceof ReinforceOptions.Options && ((ReinforceOptions.Options) options).isAllowedRetry()){
                 setProperty(CommonClientConfigKey.MaxAutoRetries, ((ReinforceOptions.Options) options).getMaxAutoRetries());
                 setProperty(CommonClientConfigKey.MaxAutoRetriesNextServer, ((ReinforceOptions.Options) options).getMaxAutoRetriesNextServer());
                 setProperty(CommonClientConfigKey.OkToRetryOnAllOperations, true);

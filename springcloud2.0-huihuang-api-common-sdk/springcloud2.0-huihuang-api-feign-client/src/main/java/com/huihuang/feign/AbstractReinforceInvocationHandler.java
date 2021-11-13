@@ -25,32 +25,75 @@ public abstract class AbstractReinforceInvocationHandler {
 
     protected void initRpcInfo(Map<Method, InvocationHandlerFactory.MethodHandler> dispatch){
         final Map<String, ReinforceOptions> rpcConfig = properties.getRpcConfig();
+        ReinforceOptions defaultOptions = rpcConfig.get("default");
         dispatch.entrySet().stream().forEach(e -> {
             Method method = e.getKey();
             InvocationHandlerFactory.MethodHandler methodHandler = e.getValue();
-            Class<?> declaringClass = method.getDeclaringClass();
-            StringBuilder configKey = new StringBuilder(declaringClass.getSimpleName());
-            configKey.append(method.getName());
-            for (Class<?> c : method.getParameterTypes()){
-                configKey.append(c.getSimpleName());
-            }
-            ReinforceOptions reinforceOptions = rpcConfig.get(configKey.toString());
-            Request.Options options = null;
+            ReinforceOptions reinforceOptions = getReinforceOptions(rpcConfig, method, defaultOptions);
+            ReinforceOptions.Options options = null;
             if (reinforceOptions == null){
                 RpcInfo annotation = method.getAnnotation(RpcInfo.class);
+                //如果从方法上没找到
                 if (annotation == null){
                     //从父类头上获取
-                    annotation = declaringClass.getAnnotation(RpcInfo.class);
+                    annotation = method.getDeclaringClass().getAnnotation(RpcInfo.class);
                 }
                 if (annotation != null){
-                    options = new Request.Options(annotation.connectTimeout(), annotation.connectTimeoutUnit(), annotation.readTimeout(), annotation.readTimeoutUnit(), annotation.followRedirects());
+                    options = new ReinforceOptions.Options(annotation);
                 }
             }else {
+                //是否重试
+                boolean retry = reinforceOptions.isRetry();
                 options = reinforceOptions.options();
+                if (retry){
+                    RpcInfo annotation = method.getAnnotation(RpcInfo.class);
+                    //如果从方法上没找到
+                    if (annotation == null){
+                        //从父类头上获取
+                        annotation = method.getDeclaringClass().getAnnotation(RpcInfo.class);
+                    }
+                    boolean allowedRetry = annotation == null ? false : annotation.isAllowedRetry();
+                    options.setAllowedRetry(allowedRetry);
+                }
             }
             if (options != null){
                 FieldUtils.setFieldValue(methodHandler, "options", options);
             }
         });
+    }
+
+    private ReinforceOptions getReinforceOptions(Map<String, ReinforceOptions> rpcConfig,Method method,ReinforceOptions defaultOptions){
+        Class<?> declaringClass = method.getDeclaringClass();
+        String simpleName = declaringClass.getSimpleName();
+        StringBuilder configKey = new StringBuilder(simpleName);
+        String methodName = method.getName();
+        configKey.append(methodName);
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        for (Class<?> c : parameterTypes){
+            configKey.append(c.getSimpleName());
+        }
+        ReinforceOptions reinforceOptions = rpcConfig.get(configKey.toString());
+        if (reinforceOptions != null){
+            return reinforceOptions;
+        }
+        String name = declaringClass.getName();
+        configKey = new StringBuilder(name);
+        configKey.append(methodName);
+        for (Class<?> c : parameterTypes){
+            configKey.append(c.getSimpleName());
+        }
+        reinforceOptions = rpcConfig.get(configKey.toString());
+        if (reinforceOptions != null){
+            return reinforceOptions;
+        }
+        reinforceOptions = rpcConfig.get(simpleName);
+        if (reinforceOptions != null){
+            return reinforceOptions;
+        }
+        reinforceOptions = rpcConfig.get(name);
+        if (reinforceOptions != null){
+            return reinforceOptions;
+        }
+        return defaultOptions;
     }
 }

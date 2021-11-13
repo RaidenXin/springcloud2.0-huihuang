@@ -44,5 +44,21 @@ public @interface RpcInfo {
      */
     boolean followRedirects() default false;
 
+    /**
+     * 切换实例的重试次数
+     * @return
+     */
+    int maxAutoRetriesNextServer() default 0;
 
+    /**
+     * 对当前实例的重试次数
+     * @return
+     */
+    int maxAutoRetries() default 0;
+
+    /**
+     * 是否允许重试
+     * @return
+     */
+    boolean isAllowedRetry() default false;
 }
