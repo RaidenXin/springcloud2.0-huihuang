@@ -11,9 +11,10 @@ public class ReinforceFeignOptionsClientConfig extends DefaultClientConfigImpl {
 		    if (options == null){
 		        throw new NullPointerException("The options parameter cannot be Null!");
             }
+		    //设置超时时间
 			setProperty(CommonClientConfigKey.ConnectTimeout, options.connectTimeoutMillis());
 			setProperty(CommonClientConfigKey.ReadTimeout, options.readTimeoutMillis());
-
+			//设置重试机制 如果是不允许重试的接口 就不设置
 			if (options instanceof ReinforceOptions.Options && ((ReinforceOptions.Options) options).isAllowedRetry()){
                 setProperty(CommonClientConfigKey.MaxAutoRetries, ((ReinforceOptions.Options) options).getMaxAutoRetries());
                 setProperty(CommonClientConfigKey.MaxAutoRetriesNextServer, ((ReinforceOptions.Options) options).getMaxAutoRetriesNextServer());

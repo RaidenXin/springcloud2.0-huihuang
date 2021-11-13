@@ -5,7 +5,6 @@ import com.huihuang.feign.properties.ReinforceFeignProperties;
 import com.huihuang.feign.properties.ReinforceOptions;
 import com.huihuang.feign.utils.FieldUtils;
 import feign.InvocationHandlerFactory;
-import feign.Request;
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -62,7 +61,52 @@ public abstract class AbstractReinforceInvocationHandler {
         });
     }
 
+    /**
+     * 获取 接口 RPC 配置
+     * @param rpcConfig
+     * @param method
+     * @param defaultOptions
+     * @return
+     */
     private ReinforceOptions getReinforceOptions(Map<String, ReinforceOptions> rpcConfig,Method method,ReinforceOptions defaultOptions){
+        /*
+         *这里是开始拼接配置的 Key
+         * 服务消费者方配置：
+         *  feign:
+         *    client:
+         *      rpcConfig:
+         *        #单个方法维度的配置
+         *        #接口名称 + # + 方法名称 + (参数类型, 参数类型...)
+         *        #包名 + 接口名称 + # + 方法名称 + (参数类型, 参数类型...) com.huihuang.service.MemberService#getUsers(String)
+         *        MemberService#getUsers(String):
+         *          connectTimeout: 1 #连接超时
+         *          connectTimeoutUnit: SECONDS #超时时间单位
+         *          readTimeout: 1 #读取超时
+         *          readTimeoutUnit: SECONDS
+         *          followRedirects: false #是否允许重定向
+         *          maxAutoRetries: 2 # 对当前实例的重试次数
+         *          maxAutoRetriesNextServer: 1 # 切换实例的重试次数
+         *        #按接口维度配置 优先级低于 单个方法维度的配置
+         *        #接口名称
+         *        #包名 + 接口名称 com.huihuang.service.MemberService
+         *        MemberService:
+         *          connectTimeout: 1 #连接超时
+         *          connectTimeoutUnit: SECONDS #超时时间单位
+         *          readTimeout: 1 #读取超时
+         *          readTimeoutUnit: SECONDS
+         *          followRedirects: false #是否允许重定向
+         *          maxAutoRetries: 2 # 对当前实例的重试次数
+         *          maxAutoRetriesNextServer: 1 # 切换实例的重试次数
+         *        #全局维度配置 优先级低于 单个方法维度 和 接口维度 的配置
+         *        default:
+         *          connectTimeout: 1 #连接超时
+         *          connectTimeoutUnit: SECONDS #超时时间单位
+         *          readTimeout: 1 #读取超时
+         *          readTimeoutUnit: SECONDS
+         *          followRedirects: false #是否允许重定向
+         *          maxAutoRetries: 2 # 对当前实例的重试次数
+         *          maxAutoRetriesNextServer: 1 # 切换实例的重试次数
+         */
         Class<?> declaringClass = method.getDeclaringClass();
         String simpleName = declaringClass.getSimpleName();
         StringBuilder configKey = new StringBuilder(simpleName);
