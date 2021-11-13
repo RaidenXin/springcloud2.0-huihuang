@@ -44,6 +44,7 @@ public abstract class AbstractReinforceInvocationHandler {
                 //是否重试
                 boolean retry = reinforceOptions.isRetry();
                 options = reinforceOptions.options();
+                //如果客户端配置的需要重试 就要去检查服务提供方是否允许重试
                 if (retry){
                     RpcInfo annotation = method.getAnnotation(RpcInfo.class);
                     //如果从方法上没找到
@@ -51,6 +52,7 @@ public abstract class AbstractReinforceInvocationHandler {
                         //从父类头上获取
                         annotation = method.getDeclaringClass().getAnnotation(RpcInfo.class);
                     }
+                    //如果服务提供方没有提供注解 默认不允许重试
                     boolean allowedRetry = annotation == null ? false : annotation.isAllowedRetry();
                     options.setAllowedRetry(allowedRetry);
                 }

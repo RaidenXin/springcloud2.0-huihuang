@@ -1,6 +1,5 @@
 package org.springframework.cloud.openfeign.ribbon;
 
-import com.huihuang.feign.properties.ReinforceFeignProperties;
 import com.huihuang.feign.ribbon.ReinforceFeignOptionsClientConfig;
 import com.netflix.client.config.IClientConfig;
 import feign.Client;
@@ -15,8 +14,6 @@ import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
  */
 public class ReinforceLoabBalancerFeignClient extends LoadBalancerFeignClient {
 
-    private ReinforceFeignProperties properties;
-
     public ReinforceLoabBalancerFeignClient(Client delegate, CachingSpringLoadBalancerFactory lbClientFactory, SpringClientFactory clientFactory) {
         super(delegate, lbClientFactory, clientFactory);
     }
@@ -25,6 +22,9 @@ public class ReinforceLoabBalancerFeignClient extends LoadBalancerFeignClient {
     protected IClientConfig getClientConfig(Request.Options options, String clientName) {
         if (options == null){
             throw new NullPointerException("The options parameter cannot be Null!");
+        }
+        if (options == DEFAULT_OPTIONS) {
+            return super.getClientConfig(options, clientName);
         }
         return new ReinforceFeignOptionsClientConfig(options);
     }
