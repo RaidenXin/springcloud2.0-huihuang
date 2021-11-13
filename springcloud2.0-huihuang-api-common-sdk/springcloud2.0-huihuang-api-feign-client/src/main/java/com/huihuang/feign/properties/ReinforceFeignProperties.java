@@ -3,6 +3,7 @@ package com.huihuang.feign.properties;
 import feign.Request;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -15,6 +16,10 @@ import java.util.Map;
 public class ReinforceFeignProperties {
 
     private Map<String, ReinforceOptions> rpcConfig;
+
+    public ReinforceFeignProperties(){
+        rpcConfig = new HashMap<>();
+    }
 
     public Map<String, ReinforceOptions> getRpcConfig() {
         return rpcConfig;
