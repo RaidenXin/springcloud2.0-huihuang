@@ -51,5 +51,5 @@ feign:
         readTimeout: 1
         readTimeoutUnit: SECONDS
         followRedirects: false
-        MaxAutoRetries: 2 # 对当前实例的重试次数
-        MaxAutoRetriesNextServer: 1 # 切换实例的重试次数
+        maxAutoRetries: 2 # 对当前实例的重试次数
+        maxAutoRetriesNextServer: 1 # 切换实例的重试次数

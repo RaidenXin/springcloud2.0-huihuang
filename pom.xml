@@ -12,7 +12,6 @@
         <module>springcloud2.0-huihuang-api-service</module>
         <module>springcloud2.0-huihuang-api-order-service-impl</module>
         <module>springcloud2.0-huihuang-api-member-service-impl</module>
-        <module>springcloud2.0-huihuang-api-common-sdk</module>
     </modules>
 
     <parent>
